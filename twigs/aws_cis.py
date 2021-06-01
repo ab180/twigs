@@ -26,7 +26,8 @@ def run_cis_aws_bench(args):
     cwd = os.getcwd()
     os.chdir(os.path.dirname(prowler_path))
     cmd = 'AWS_ACCESS_KEY_ID=' + args.aws_access_key + ' AWS_SECRET_ACCESS_KEY=' + args.aws_secret_key
-    cmd = cmd + ' ' + prowler_path + ' -b -q -g cislevel2 -M csv'
+    cmd = cmd + ' ' + prowler_path + ' -b -g cislevel2 -M csv'
+    logging.debug("Cmdline: '%s'", cmd)
     csv_file_path = tempfile.gettempdir() + os.path.sep + 'aws_cis_bench_out.csv'
     with open(csv_file_path, "w") as csv_file:
         try:
@@ -35,6 +36,9 @@ def run_cis_aws_bench(args):
         except subprocess.CalledProcessError:
             logging.error("Error running CIS AWS bench script")
             sys.exit(1)
+    with open(csv_file_path, "r") as csv_file:
+        print(csv_file.read())
+    logging.debug("Prolwer exited with code %s" % exit_code)
 
     os.chdir(cwd) 
     asset = { }
